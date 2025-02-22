@@ -51,10 +51,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
 
           script: |
-            sudo docker stop github-actions-demo
-            sudo docker rm github-actions-demo
-            sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
+            sudo docker stop github-actions-demo || true
+            sudo docker rm github-actions-demo || true
+            sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo || true
             #           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
             sudo docker run -it -d -p 8080:8080 --name github-actions-demo ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
-            debug: true
 

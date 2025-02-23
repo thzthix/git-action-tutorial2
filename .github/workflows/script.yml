@@ -69,7 +69,6 @@ jobs:
           port: ${{ secrets.EC2_SSH_PORT }}
 
           script: |
-            sudo docker rmi -f ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo || true
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
             sudo docker run -it -d -p 8080:8080 --name github-actions-demo ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
 

@@ -69,11 +69,13 @@ jobs:
           port: ${{ secrets.EC2_SSH_PORT }}
 
           script: |
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
+            sudo docker stop github-actions-demo
+            sudo docker rm github-actions-demo
+            sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
+            #sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
             sudo docker run -it -d -p 8080:8080 --name github-actions-demo ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
 
       # (4) CD : Docker 컨테이너 수행  5) Remove Github IP from security group
       - name: Remove IP FROM security group
         run: |
-          aws ec2 describe-security-groups --group-id ${{ secrets.AWS_SG_ID }}
           aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32   

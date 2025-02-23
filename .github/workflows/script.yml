@@ -69,7 +69,7 @@ jobs:
           port: ${{ secrets.EC2_SSH_PORT }}
 
           script: |
-            sudo docker  ${{ secrets.DOCKERHUB_USERNAME }}/stop github-actions-demo
+            sudo docker stop ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
             sudo docker rm  ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
             sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo

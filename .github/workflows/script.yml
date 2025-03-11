@@ -53,29 +53,29 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
+
       # (3) CD : Docker 컨테이너 수행 3) Add github ip to AWS
       - name: Add GitHub IP to AWS
         run: |
           aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
-
-      # (4) CD : Docker 컨테이너 수행 4) AWS EC2 Server Connect & Docker 명령어 실행
+      # (3) CD : Docker 컨테이너 수행 4) AWS EC2 Server Connect & Docker 명령어 실행
       - name: AWS EC2 Connection
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          username: ${{ secrets.EC2_USERNAME }}
+          password: ${{ secrets.EC2_PASSWORD }}
           port: ${{ secrets.EC2_SSH_PORT }}
-
+          timeout: 60s
           script: |
-            sudo docker stop github-actions-demo
-            sudo docker rm github-actions-demo
-            sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
-            #sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
-            sudo docker run -it -d -p 8080:8080 --name github-actions-demo ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
+                    sudo docker stop github-actions-demo
+                    sudo docker rm github-actions-demo
+                    sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
+#sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
+                    sudo docker run -it -d -p 8080:8080 --name github-actions-demo ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-demo
 
-      # (4) CD : Docker 컨테이너 수행  5) Remove Github IP from security group 
+      # (3) CD : Docker 컨테이너 수행 5) Remove Github IP from security group
       - name: Remove IP FROM security group
         run: |
-          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32   
+          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
